@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
-const { createNewUser } = require('../service/auth.service');
+const { createNewUser, signin } = require('../service/auth.service');
 const { catchAsync } = require('../utils/errorHandler');
 const ErrorHandler = require('../utils/errorHandler');
 
@@ -22,12 +22,8 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return next(new ErrorHandler('Please provide email and password', 400));
-  }
-  const user = await User.findOne({ email }).select('+password');
-  const checkIfPasswordMatch = user.comparePassword(password, user.password);
+  const { user, checkIfPasswordMatch } = await signin(req.body);
+  console.log(checkIfPasswordMatch);
 
   if (!user || !checkIfPasswordMatch) {
     return next(new ErrorHandler('Invalid email or password'), 401);
