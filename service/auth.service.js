@@ -27,7 +27,7 @@ exports.signin = async (data) => {
   try {
     const { email, password } = data;
     if (!email || !password) {
-      throw new ErrorHandler('Invalid email or password', 400);
+      throw new ErrorHandler('Email and Password is requiredd', 401);
     }
     const user = await User.findOne({ email }).select('+password');
     const checkIfPasswordMatch = await user.comparePassword(
