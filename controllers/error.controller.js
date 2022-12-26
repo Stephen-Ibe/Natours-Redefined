@@ -41,6 +41,9 @@ const handleValidationError = (err) => {
   return new ErrorHandler(message, 400);
 };
 
+const handleJWTError = (err) =>
+  new ErrorHandler('Invalid token. Please log in', 401);
+
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -53,6 +56,7 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'CastError') error = handleCastError(error);
     if (err.code === 11000) error = handleDuplicateFieldError(error);
     if (err.name === 'ValidationError') error = handleValidationError(error);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
 
     sendProdError(error, res);
   }
